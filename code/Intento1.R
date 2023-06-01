@@ -1,5 +1,9 @@
+#data <- read.csv (file="C:/Users/silvi/Documents/Cybersecurity/05. Data Driven Security/ML/Book2.csv",header=T)
 
-data <- read.csv (file="C:/Users/silvi/Documents/Cybersecurity/05. Data Driven Security/ML/Book2.csv",header=T)
+library(readr)
+data <- read_csv("data/Book2.csv")
+View(data)
+
 
 str(data)      # Display structure of the data set
 summary(data)  # Generate summary statistics
@@ -7,6 +11,8 @@ summary(data)  # Generate summary statistics
 hist(data$Duration)  # Example histogram of an attribute (V1)
 data$generic_attack <- data$Attack == "normal."
 boxplot(data$Duration)  # Example histogram of an attribute (V1)
+stem(data$Duration)
+
 
 table(data$V41)  # Class distribution of the target variable (V41)
 barplot(table(data$V41), main = "Class Distribution", xlab = "Class", ylab = "Frequency")
