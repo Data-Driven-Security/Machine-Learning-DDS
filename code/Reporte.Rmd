@@ -85,9 +85,8 @@ Toma un parámetro "partition" como entrada.
 1. Genera predicciones (`pred`) en el conjunto de datos "testing" utilizando el modelo de bosque aleatorio entrenado.
 1. Convierte las columnas "Attack" y "pred" en el conjunto de datos "testing" al tipo de carácter.
 1. Compara las columnas "Attack" y "pred" para verificar si coinciden y asigna el resultado a la columna "match" en el conjunto de datos "valid".
-1. Calcula el porcentaje de valores coincidentes en el conjunto de datos "valid" y asigna el resultado a la variable "output".
-1. Genera una tabla de la variable "output" usando "table(output)".
-1. Finalmente, devuelve la variable "output".
+1. Se calcula el porcentaje de valores coincidentes entre los valores de ataque pronosticados y reales mediante la función de tabla. Divide el recuento de coincidencias por el número total de filas en el marco de datos válido y lo multiplica por 100 para obtener el porcentaje.
+1. SAe convierte el objeto de la tabla en un marco de datos usando as.data.frame. Luego, extraen el valor en la segunda fila y la segunda columna del marco de datos, almacenándolo en la variable value_df.
 
 La función parece ser una implementación personalizada para entrenar un modelo de bosque aleatorio, evaluar su rendimiento y devolver el porcentaje de valores coincidentes en las predicciones.
 
