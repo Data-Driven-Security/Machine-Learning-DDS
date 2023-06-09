@@ -5,32 +5,6 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-library(randomForest)
-library(readr)
-library(caret)
-library(e1071)
-
-# selected_cols <- c("SrcBytes", "DstBytes", "Land", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn",  "DstHostSameSrvRate", "DstHostSrvCount","Flag","Attack" )
-selected_cols <- c("SrcBytes", "DstBytes", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn",  "DstHostSameSrvRate", "DstHostSrvCount","Flag","Attack" )
-
-
-```
-  
-
-
-```{r read_data}
-data_full <- read_csv("../data/Book1.csv",
-                  col_types = cols(SrcBytes = col_integer(),
-                                   DstBytes = col_integer(), Land = col_integer(),
-                                   WrongFragment = col_integer(), Urgent = col_number(),
-                                   Hot = col_number(), NumFailedLogin = col_integer()))
-
-data <- read.csv (file="../data/Book2.csv",header=T)
-
-```
 
 ## Introducción
 Para iniciar el proceso de análisis de la data de KDD Cup 1999, debemos entender en qué consiste esta base de datos. El conjunto de datos de KDD Cup 1999, un conjunto de datos de referencia en el campo de la detección de intrusos en la red, que presenta una oportunidad única para analizar y comprender los patrones de tráfico de la red. Este conjunto de datos captura información de conexión de red, incluidos varios atributos, como direcciones IP de origen y destino, tipos de protocolo y duración de la conexión. El objetivo principal de analizar este conjunto de datos es detectar y clasificar las intrusiones en la red con precisión.
@@ -39,22 +13,86 @@ Para iniciar el proceso de análisis de la data de KDD Cup 1999, debemos entende
 ## Objetivo
 En este análisis, nuestro objetivo es explorar el conjunto de datos de la Copa KDD de 1999 y obtener información sobre los comportamientos del tráfico de red. Mediante el empleo de técnicas de análisis de datos exploratorios, examinaremos la estructura, las distribuciones y las relaciones entre los atributos del conjunto de datos. Profundizaremos en la distribución de clases para comprender la prevalencia de las conexiones normales frente a las intrusiones, y analizaremos las características de los diferentes tipos de conexión de red. Además, aplicaremos algoritmos de aprendizaje automático para construir modelos de clasificación capaces de predecir con precisión las intrusiones en la red en función de los atributos disponibles. Este análisis proporcionará información valiosa sobre la naturaleza del tráfico de la red, ayudará a identificar posibles amenazas de seguridad y contribuirá al desarrollo de sistemas de detección de intrusos eficaces. 
 
-##  1. Comprender el conjunto de datos
+##  Comprención del conjunto de datos
 
-El primer paso para iniciar el análisis es entender en qué consisten los datos proporcionados. En el extracto de Book2.csv podemos encontrar las siguientes columnas con su respectiva definición en los anexos. Con estas definiciones podemos comprender el conjunto de datos, su estructura y el contenido. 
+Para iniciar el análisis es entender en qué consisten los datos proporcionados. En el extracto de Book2.csv podemos encontrar las siguientes columnas con su respectiva definición en los anexos. Con estas definiciones podemos comprender el conjunto de datos, su estructura y el contenido. 
 
-## 2.	Análisis exploratorio de datos
-El segundo paso es la visualización de datos, crearemos visualizaciones como histogramas, diagramas de caja, diagramas de dispersión o matrices de correlación para comprender la distribución, las relaciones y los posibles valores atípicos en los datos. Utilizaremos el paquete llamado “DataExplorer” para ayudarnos en realizar un reporte sobre la información.
+## Análisis exploratorio de datos
+El siguiente paso es la visualización de datos, crearemos visualizaciones como histogramas, diagramas de caja, diagramas de dispersión o matrices de correlación para comprender la distribución, las relaciones y los posibles valores atípicos en los datos. Utilizaremos el paquete llamado “DataExplorer” para ayudarnos en realizar un reporte sobre la información.
 
 
-## Including Plots
+## Explicación del código: configuración de ambiente
+knitr::opts_chunk$set(echo = TRUE) establece la opción global para incluir salidas de fragmentos de código, es decir, repetir el código, de forma predeterminada. Esto significa que el código y su resultado se mostrarán en el documento final a menos que se especifique lo contrario.
 
-```{r train_test2, echo=FALSE}
+Las líneas subsiguientes cargan las bibliotecas requeridas usando la función library(). En este caso, el código carga las siguientes bibliotecas: randomForest, readr, caret y e1071. Estas bibliotecas proporcionan funciones y herramientas adicionales para el análisis de datos y el aprendizaje automático.
+
+selected_cols se define como un vector que contiene los nombres de las columnas seleccionadas del conjunto de datos. Las columnas especificadas incluyen "SrcBytes", "DstBytes", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn", "DstHostSameSrvRate", "DstHostSrvCount", "Flag" y "Attack". Estas son las columnas que se utilizarán en el análisis o modelado luego en el reporte.
+
+El propósito de este fragmento de código es configurar el entorno de R, cargar las bibliotecas necesarias y definir un vector selected_cols que contenga los nombres de las columnas seleccionadas de un conjunto de datos. 
+
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(randomForest)
+library(readr)
+library(caret)
+library(e1071)
+
+selected_cols <- c("SrcBytes", "DstBytes", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn",  "DstHostSameSrvRate", "DstHostSrvCount","Flag","Attack" )
+
+
+```
+  
+## Explicación del código: bases de datos
+El código lee los datos de un archivo CSV llamado "Book2.csv" ubicado en el directorio "../data" relativo al directorio de trabajo actual. La función read.csv() se utiliza para leer el archivo CSV. El argumento del archivo especifica la ruta del archivo y header = T indica que el archivo tiene una fila de encabezado. Los datos resultantes se almacenan en la variable "data".
+
+
+```{r read_data}
+
+data <- read.csv (file="../data/Book2.csv",header=T)
+
+```
+
+## Explicación del código: selección de colunmas
+Se selecciona columnas específicas del conjunto de datos y las asigna a un nuevo conjunto de datos denominado data1. La notación data[,selected_cols] se usa para seleccionar todas las filas (data[,) y solo las columnas especificadas en el vector selected_cols inicializado previamente. Esta operación crea subconjuntos del conjunto de datos original para incluir solo las columnas deseadas.
+
+Luego se convierte la columna Atack del conjunto de datos data1 en una variable de factor utilizando la función as.factor(). Los factores se utilizan en R para representar variables categóricas o nominales. Convertir Attack en un factor sugiere que es una variable categórica con distintos niveles o clases.
+
+
+```{r feature_selection, echo=TRUE}
+data1 <- data[,selected_cols]
+data1$Attack <- as.factor(data1$Attack)
+```
+
+
+
+## Explicación del código: Análisis de datos
+
+La función ´training_method´ realiza los siguientes pasos:
+
+Toma un parámetro "partition" como entrada.
+1. Utiliza la función "createDataPartition()" para dividir la variable "Attack" en el conjunto de datos "data1" en particiones de entrenamiento y prueba basadas en el valor de partición especificado.
+1. Crea el conjunto de datos de "training" subdividiendo "datos1" en función de los índices obtenidos de "createDataPartition()".
+1. Crea el conjunto de datos "testing" subdividiendo "data1" excluyendo los índices obtenidos de"createDataPartition()".
+1. Calcula el número de filas en el conjunto de datos de training y lo almacena en una variable llamada "dim".
+1. Se ajusta a un modelo de bosque aleatorio ("randomForest()") con "Ataque" como variable de respuesta y todas las demás variables en el conjunto de datos `training`.
+1. Imprime la salida del modelo de bosque aleatorio usando "print(output.forest)".
+1. Crea una gráfica del modelo de bosque aleatorio usando "plot(output.forest)".
+1. Genera predicciones (`pred`) en el conjunto de datos "testing" utilizando el modelo de bosque aleatorio entrenado.
+1. Convierte las columnas "Attack" y "pred" en el conjunto de datos "testing" al tipo de carácter.
+1. Compara las columnas `Attack` y `pred` para verificar si coinciden y asigna el resultado a la columna "match" en el conjunto de datos "valid".
+1. Calcula el porcentaje de valores coincidentes en el conjunto de datos "valid" y asigna el resultado a la variable "output".
+1. Genera una tabla de la variable `output` usando `table(output)`.
+1. Finalmente, devuelve la variable `output`.
+
+La función parece ser una implementación personalizada para entrenar un modelo de bosque aleatorio, evaluar su rendimiento y devolver el porcentaje de valores coincidentes en las predicciones.
+
+```{r train_test2, echo=TRUE}
 
 training_method <- function(partition) {
   
 inTrain <- createDataPartition(y=data1$Attack,p=partition, list=FALSE)
-str (data1)
 training <- data1[inTrain,]
 testing <- data1[-inTrain,]
 dim <-nrow (training)
@@ -63,14 +101,14 @@ dim(training)
 
 
 
-##output.forest <- randomForest(Attack ~ ., data = training)
-##print(output.forest)
-##plot(output.forest)
+output.forest <- randomForest(Attack ~ ., data = training)
+#print(output.forest)
+#plot(output.forest)
 
 
 
 pred <- predict(output.forest,testing)
-str (pred)
+#str (pred)
 
 
 valid <- testing
@@ -78,17 +116,49 @@ valid$Attack <- as.character(valid$Attack)
 valid$pred <- as.character(pred)
 valid$match <- valid$Attack == valid$pred
 
-output <- (valid$match)/nrow(valid)*100
 
-return(output)
+
+
+print(table(valid$match)/nrow(valid)*100)
+
+table <- table(valid$match)/nrow(valid)*100
+print(table)
+
+
+my_table_df <- as.data.frame(table)
+value_df <- my_table_df[2, 2] 
+print(value_df)
+
+
+return(value_df)
 
 
 }
 
+true_array <- c()
+partitions_array <- c()
 
-output <- training_method(0.50)
-print("Hello world")
-print(output)
-table(output)
+# For loop to add values to the array
+for (i in 1:100) {
+  partition <- i/100
+  value <- training_method(partition)
+  true_array <- c(true_array, value)
+  partitions_array <- c(partitions_array, partition)
+}
+
+# Print the array
+print(my_array)
+
+##output <- training_method(0.50)
+##print(output)
+##table(output)
+
+plot(true_array, partitions_array,
+     main="Relationship Between accuracy and partition",
+     pch=16, col="blue")
+
 ```
+
+
+
 

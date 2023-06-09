@@ -82,7 +82,10 @@ valid$Attack <- as.character(valid$Attack)
 valid$pred <- as.character(pred)
 valid$match <- valid$Attack == valid$pred
 
-table(valid$match)/nrow(valid)*100
+output <- (valid$match)/nrow(valid)*100
+table(output)
+output
+#table(valid$match)/nrow(valid)*100
 ```
 
 ```{r simple_validation2, echo=FALSE}

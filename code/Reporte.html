@@ -357,13 +357,6 @@ display: none;
 </div>
 
 
-<pre class="r"><code>data_full &lt;- read_csv(&quot;../data/Book1.csv&quot;,
-                  col_types = cols(SrcBytes = col_integer(),
-                                   DstBytes = col_integer(), Land = col_integer(),
-                                   WrongFragment = col_integer(), Urgent = col_number(),
-                                   Hot = col_number(), NumFailedLogin = col_integer()))
-
-data &lt;- read.csv (file=&quot;../data/Book2.csv&quot;,header=T)</code></pre>
 <div id="introducción" class="section level2">
 <h2>Introducción</h2>
 <p>Para iniciar el proceso de análisis de la data de KDD Cup 1999,
@@ -394,293 +387,190 @@ información valiosa sobre la naturaleza del tráfico de la red, ayudará a
 identificar posibles amenazas de seguridad y contribuirá al desarrollo
 de sistemas de detección de intrusos eficaces.</p>
 </div>
-<div id="comprender-el-conjunto-de-datos" class="section level2">
-<h2>1. Comprender el conjunto de datos</h2>
-<p>El primer paso para iniciar el análisis es entender en qué consisten
-los datos proporcionados. En el extracto de Book2.csv podemos encontrar
-las siguientes columnas con su respectiva definición en los anexos. Con
+<div id="comprención-del-conjunto-de-datos" class="section level2">
+<h2>Comprención del conjunto de datos</h2>
+<p>Para iniciar el análisis es entender en qué consisten los datos
+proporcionados. En el extracto de Book2.csv podemos encontrar las
+siguientes columnas con su respectiva definición en los anexos. Con
 estas definiciones podemos comprender el conjunto de datos, su
 estructura y el contenido.</p>
 </div>
 <div id="análisis-exploratorio-de-datos" class="section level2">
-<h2>2. Análisis exploratorio de datos</h2>
-<p>El segundo paso es la visualización de datos, crearemos
+<h2>Análisis exploratorio de datos</h2>
+<p>El siguiente paso es la visualización de datos, crearemos
 visualizaciones como histogramas, diagramas de caja, diagramas de
 dispersión o matrices de correlación para comprender la distribución,
 las relaciones y los posibles valores atípicos en los datos.
 Utilizaremos el paquete llamado “DataExplorer” para ayudarnos en
 realizar un reporte sobre la información.</p>
 </div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the
-code chunk to prevent printing of the R code that generated the
-plot.</p>
-<pre><code>## Warning in createDataPartition(y = data1$Attack, p = 0.01, list = FALSE): Some
-## classes have a single record ( imap. ) and these will be selected for the
-## sample</code></pre>
-<pre><code>## &#39;data.frame&#39;:    77291 obs. of  10 variables:
-##  $ SrcBytes          : int  105 105 105 105 29 105 223 230 105 105 ...
-##  $ DstBytes          : int  146 146 146 146 0 146 185 260 146 146 ...
-##  $ WrongFragment     : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ Urgent            : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ SameSrvRate       : num  1 1 1 1 0.5 1 1 1 1 1 ...
-##  $ LoggedIn          : int  0 0 0 0 0 0 1 1 0 0 ...
-##  $ DstHostSameSrvRate: num  1 1 1 1 0.3 0.99 1 1 1 0.99 ...
-##  $ DstHostSrvCount   : int  254 254 254 255 3 253 255 255 254 252 ...
-##  $ Flag              : chr  &quot;SF&quot; &quot;SF&quot; &quot;SF&quot; &quot;SF&quot; ...
-##  $ Attack            : Factor w/ 38 levels &quot;apache2.&quot;,&quot;back.&quot;,..: 17 29 29 29 17 17 17 17 17 29 ...</code></pre>
-<pre><code>## [1] 800  10</code></pre>
+<div id="explicación-del-código-configuración-de-ambiente" class="section level2">
+<h2>Explicación del código: configuración de ambiente</h2>
+<p>knitr::opts_chunk$set(echo = TRUE) establece la opción global para
+incluir salidas de fragmentos de código, es decir, repetir el código, de
+forma predeterminada. Esto significa que el código y su resultado se
+mostrarán en el documento final a menos que se especifique lo
+contrario.</p>
+<p>Las líneas subsiguientes cargan las bibliotecas requeridas usando la
+función library(). En este caso, el código carga las siguientes
+bibliotecas: randomForest, readr, caret y e1071. Estas bibliotecas
+proporcionan funciones y herramientas adicionales para el análisis de
+datos y el aprendizaje automático.</p>
+<p>selected_cols se define como un vector que contiene los nombres de
+las columnas seleccionadas del conjunto de datos. Las columnas
+especificadas incluyen “SrcBytes”, “DstBytes”, “WrongFragment”,
+“Urgent”, “SameSrvRate”, “LoggedIn”, “DstHostSameSrvRate”,
+“DstHostSrvCount”, “Flag” y “Attack”. Estas son las columnas que se
+utilizarán en el análisis o modelado luego en el reporte.</p>
+<p>El propósito de este fragmento de código es configurar el entorno de
+R, cargar las bibliotecas necesarias y definir un vector selected_cols
+que contenga los nombres de las columnas seleccionadas de un conjunto de
+datos.</p>
+<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE)
+
+library(randomForest)</code></pre>
+<pre><code>## randomForest 4.7-1.1</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre class="r"><code>library(readr)
+library(caret)</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
 <pre><code>## 
-## Call:
-##  randomForest(formula = Attack ~ ., data = training) 
-##                Type of random forest: classification
-##                      Number of trees: 500
-## No. of variables tried at each split: 3
+## Attaching package: &#39;ggplot2&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:randomForest&#39;:
 ## 
-##         OOB estimate of  error rate: 7.38%
-## Confusion matrix:
-##                  apache2. back. buffer_overflow. ftp_write. guess_passwd.
-## apache2.                8     0                0          0             0
-## back.                   0     4                0          0             0
-## buffer_overflow.        0     0                0          0             0
-## ftp_write.              0     0                0          0             0
-## guess_passwd.           0     0                0          0            12
-## httptunnel.             0     0                0          0             0
-## imap.                   0     0                0          0             0
-## ipsweep.                0     0                0          0             0
-## land.                   0     0                0          0             0
-## loadmodule.             0     0                0          0             0
-## mailbomb.               0     0                0          0             0
-## mscan.                  0     0                0          0             0
-## multihop.               0     0                0          0             0
-## named.                  0     0                0          0             0
-## neptune.                1     0                0          0             0
-## nmap.                   0     0                0          0             0
-## normal.                 0     0                0          0             0
-## perl.                   0     0                0          0             0
-## phf.                    0     0                0          0             0
-## pod.                    0     0                0          0             0
-## portsweep.              0     0                0          0             0
-## processtable.           0     0                0          1             0
-## ps.                     0     0                0          0             0
-## rootkit.                0     0                0          0             0
-## saint.                  0     0                0          0             0
-## satan.                  0     0                0          0             0
-## sendmail.               0     0                0          0             0
-## smurf.                  0     0                0          0             0
-## snmpgetattack.          0     0                0          0             0
-## snmpguess.              0     0                0          0             0
-## sqlattack.              0     0                0          0             0
-## teardrop.               0     0                0          0             0
-## udpstorm.               0     0                0          0             0
-## warezmaster.            0     0                0          0             0
-## worm.                   0     0                0          0             0
-## xlock.                  0     0                0          0             0
-## xsnoop.                 0     0                0          0             0
-## xterm.                  0     0                0          0             0
-##                  httptunnel. imap. ipsweep. land. loadmodule. mailbomb. mscan.
-## apache2.                   0     0        0     0           0         0      0
-## back.                      0     0        0     0           0         0      0
-## buffer_overflow.           0     0        0     0           0         0      0
-## ftp_write.                 0     0        0     0           0         0      0
-## guess_passwd.              0     0        0     0           0         0      0
-## httptunnel.                0     0        0     0           0         0      2
-## imap.                      0     0        0     0           0         0      0
-## ipsweep.                   0     0        0     0           0         0      0
-## land.                      0     0        0     0           0         0      0
-## loadmodule.                0     0        0     0           0         0      0
-## mailbomb.                  0     0        0     0           0         2      0
-## mscan.                     0     0        0     0           0         0      9
-## multihop.                  0     0        0     0           0         0      0
-## named.                     0     0        0     0           0         0      0
-## neptune.                   0     0        0     0           0         0      0
-## nmap.                      0     0        0     0           0         0      0
-## normal.                    0     0        0     0           0         1      1
-## perl.                      0     0        0     0           0         0      0
-## phf.                       0     0        0     0           0         0      1
-## pod.                       0     0        0     0           0         0      0
-## portsweep.                 0     0        0     1           0         0      0
-## processtable.              0     0        0     0           0         0      1
-## ps.                        0     0        0     0           0         0      0
-## rootkit.                   0     0        0     0           0         0      0
-## saint.                     0     0        0     0           0         0      0
-## satan.                     0     0        0     0           0         0      0
-## sendmail.                  0     0        0     0           0         0      0
-## smurf.                     0     0        0     0           0         0      0
-## snmpgetattack.             0     0        0     0           0         0      0
-## snmpguess.                 0     0        0     0           0         0      0
-## sqlattack.                 0     0        0     0           0         0      0
-## teardrop.                  0     0        0     0           0         0      0
-## udpstorm.                  0     0        0     0           0         0      0
-## warezmaster.               0     0        1     0           0         0      0
-## worm.                      0     0        0     0           0         1      0
-## xlock.                     0     0        0     0           0         0      0
-## xsnoop.                    0     0        0     0           0         0      0
-## xterm.                     0     0        0     0           0         0      0
-##                  multihop. named. neptune. nmap. normal. perl. phf. pod.
-## apache2.                 0      0        0     0       0     0    0    0
-## back.                    0      0        0     0       0     0    0    0
-## buffer_overflow.         0      0        0     0       1     0    0    0
-## ftp_write.               0      0        0     0       0     0    0    0
-## guess_passwd.            0      0        0     0       2     0    0    0
-## httptunnel.              0      0        0     0       0     0    0    0
-## imap.                    0      0        0     0       1     0    0    0
-## ipsweep.                 0      0        0     0       1     0    0    0
-## land.                    0      0        0     0       0     0    0    0
-## loadmodule.              0      0        0     0       1     0    0    0
-## mailbomb.                0      0        0     0       2     0    0    0
-## mscan.                   0      0        1     0       0     0    0    0
-## multihop.                0      0        0     0       1     0    0    0
-## named.                   0      0        0     0       1     0    0    0
-## neptune.                 0      0      201     0       0     0    0    0
-## nmap.                    0      0        0     0       0     0    0    0
-## normal.                  0      0        0     0     476     0    0    0
-## perl.                    0      0        0     0       0     0    0    0
-## phf.                     0      0        0     0       0     0    0    0
-## pod.                     0      0        0     0       1     0    0    0
-## portsweep.               0      0        0     0       0     0    0    0
-## processtable.            0      0        0     0       0     0    0    0
-## ps.                      0      0        0     0       0     0    0    0
-## rootkit.                 0      0        0     0       1     0    0    0
-## saint.                   0      0        2     0       1     0    0    0
-## satan.                   0      0        4     0       0     0    0    0
-## sendmail.                0      0        0     0       1     0    0    0
-## smurf.                   0      0        0     0       3     0    0    0
-## snmpgetattack.           0      0        0     0       2     0    0    0
-## snmpguess.               0      0        0     0       1     0    0    0
-## sqlattack.               0      0        0     0       1     0    0    0
-## teardrop.                0      0        0     0       1     0    0    0
-## udpstorm.                0      0        0     0       0     0    0    0
-## warezmaster.             0      0        0     0       3     0    0    0
-## worm.                    0      0        0     0       0     0    0    0
-## xlock.                   0      0        0     0       0     0    0    0
-## xsnoop.                  0      0        0     0       1     0    0    0
-## xterm.                   0      0        0     0       1     0    0    0
-##                  portsweep. processtable. ps. rootkit. saint. satan. sendmail.
-## apache2.                  0             0   0        0      0      0         0
-## back.                     0             0   0        0      0      0         0
-## buffer_overflow.          0             0   0        0      0      0         0
-## ftp_write.                0             1   0        0      0      0         0
-## guess_passwd.             0             0   0        0      0      0         0
-## httptunnel.               0             0   0        0      0      0         0
-## imap.                     0             0   0        0      0      0         0
-## ipsweep.                  0             0   0        0      0      0         0
-## land.                     1             0   0        0      0      0         0
-## loadmodule.               0             0   0        0      0      0         0
-## mailbomb.                 0             0   0        0      0      0         0
-## mscan.                    1             0   0        0      0      0         0
-## multihop.                 0             0   0        0      0      0         0
-## named.                    0             0   0        0      0      0         0
-## neptune.                  0             0   0        0      0      2         0
-## nmap.                     0             0   0        0      0      0         0
-## normal.                   0             0   0        0      0      1         0
-## perl.                     0             0   0        0      0      0         0
-## phf.                      0             0   0        0      0      0         0
-## pod.                      0             0   0        0      0      0         0
-## portsweep.                1             0   0        0      0      0         0
-## processtable.             0             6   0        0      0      0         0
-## ps.                       0             1   0        0      0      0         0
-## rootkit.                  0             0   0        0      0      0         0
-## saint.                    0             0   0        0      0      1         0
-## satan.                    0             0   0        0      0      5         0
-## sendmail.                 0             0   0        0      0      0         0
-## smurf.                    0             0   0        0      0      0         0
-## snmpgetattack.            0             0   0        0      0      0         0
-## snmpguess.                0             0   0        0      0      0         0
-## sqlattack.                0             0   0        0      0      0         0
-## teardrop.                 0             0   0        0      0      0         0
-## udpstorm.                 0             1   0        0      0      0         0
-## warezmaster.              0             0   0        0      0      0         0
-## worm.                     0             0   0        0      0      0         0
-## xlock.                    0             0   0        0      0      0         0
-## xsnoop.                   0             0   0        0      0      0         0
-## xterm.                    0             0   0        0      0      0         0
-##                  smurf. snmpgetattack. snmpguess. sqlattack. teardrop.
-## apache2.              0              0          0          0         0
-## back.                 0              0          0          0         0
-## buffer_overflow.      0              0          0          0         0
-## ftp_write.            0              0          0          0         0
-## guess_passwd.         0              0          0          0         0
-## httptunnel.           0              0          0          0         0
-## imap.                 0              0          0          0         0
-## ipsweep.              0              0          0          0         0
-## land.                 0              0          0          0         0
-## loadmodule.           0              0          0          0         0
-## mailbomb.             0              0          0          0         0
-## mscan.                0              0          0          0         0
-## multihop.             0              0          0          0         0
-## named.                0              0          0          0         0
-## neptune.              0              0          0          0         0
-## nmap.                 0              0          0          0         0
-## normal.               0              0          1          0         0
-## perl.                 0              0          0          0         0
-## phf.                  0              0          0          0         0
-## pod.                  0              0          0          0         0
-## portsweep.            0              0          0          0         0
-## processtable.         0              0          0          0         0
-## ps.                   0              0          0          0         0
-## rootkit.              0              0          0          0         0
-## saint.                0              0          0          0         0
-## satan.                0              0          0          0         0
-## sendmail.             0              0          0          0         0
-## smurf.                7              0          0          0         0
-## snmpgetattack.        0              0          0          0         0
-## snmpguess.            0              0          3          0         0
-## sqlattack.            0              0          0          0         0
-## teardrop.             0              0          0          0         0
-## udpstorm.             0              0          0          0         0
-## warezmaster.          0              0          0          0         0
-## worm.                 0              0          0          0         0
-## xlock.                0              0          0          0         0
-## xsnoop.               0              0          0          0         0
-## xterm.                0              0          0          0         0
-##                  udpstorm. warezmaster. worm. xlock. xsnoop. xterm. class.error
-## apache2.                 0            0     0      0       0      0 0.000000000
-## back.                    0            0     0      0       0      0 0.000000000
-## buffer_overflow.         0            0     0      0       0      0 1.000000000
-## ftp_write.               0            0     0      0       0      0 1.000000000
-## guess_passwd.            0            0     0      0       0      0 0.142857143
-## httptunnel.              0            0     0      0       0      0 1.000000000
-## imap.                    0            0     0      0       0      0 1.000000000
-## ipsweep.                 0            1     0      0       0      0 1.000000000
-## land.                    0            0     0      0       0      0 1.000000000
-## loadmodule.              0            0     0      0       0      0 1.000000000
-## mailbomb.                0            0     0      0       0      0 0.500000000
-## mscan.                   0            0     0      0       0      0 0.181818182
-## multihop.                0            0     0      0       0      0 1.000000000
-## named.                   0            0     0      0       0      0 1.000000000
-## neptune.                 0            0     0      0       0      0 0.014705882
-## nmap.                    1            0     0      0       0      0 1.000000000
-## normal.                  0            0     0      0       0      0 0.008333333
-## perl.                    0            1     0      0       0      0 1.000000000
-## phf.                     0            0     0      0       0      0 1.000000000
-## pod.                     0            0     0      0       0      0 1.000000000
-## portsweep.               0            0     0      0       0      0 0.500000000
-## processtable.            0            0     0      0       0      0 0.250000000
-## ps.                      0            0     0      0       0      0 1.000000000
-## rootkit.                 0            0     0      0       0      0 1.000000000
-## saint.                   0            0     0      0       0      0 1.000000000
-## satan.                   0            0     0      0       0      0 0.444444444
-## sendmail.                0            0     0      0       0      0 1.000000000
-## smurf.                   0            0     0      0       0      0 0.300000000
-## snmpgetattack.           0            0     0      0       0      0 1.000000000
-## snmpguess.               0            0     0      0       0      0 0.250000000
-## sqlattack.               0            0     0      0       0      0 1.000000000
-## teardrop.                0            0     0      0       0      0 1.000000000
-## udpstorm.                0            0     0      0       0      0 1.000000000
-## warezmaster.             0            7     0      0       0      0 0.363636364
-## worm.                    0            0     0      0       0      0 1.000000000
-## xlock.                   0            0     1      0       0      0 1.000000000
-## xsnoop.                  0            0     0      0       0      0 1.000000000
-## xterm.                   0            0     0      0       0      0 1.000000000</code></pre>
-<p><img src="data:image/png;base64,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" width="672" /></p>
-<pre><code>##  Factor w/ 38 levels &quot;apache2.&quot;,&quot;back.&quot;,..: 17 17 17 17 17 17 17 17 17 17 ...
-##  - attr(*, &quot;names&quot;)= chr [1:76491] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...</code></pre>
-<pre><code>## 
-##     FALSE      TRUE 
-##  4.892079 95.107921</code></pre>
+##     margin</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre class="r"><code>library(e1071)
+
+selected_cols &lt;- c(&quot;SrcBytes&quot;, &quot;DstBytes&quot;, &quot;WrongFragment&quot;, &quot;Urgent&quot;, &quot;SameSrvRate&quot;, &quot;LoggedIn&quot;,  &quot;DstHostSameSrvRate&quot;, &quot;DstHostSrvCount&quot;,&quot;Flag&quot;,&quot;Attack&quot; )</code></pre>
+</div>
+<div id="explicación-del-código-bases-de-datos" class="section level2">
+<h2>Explicación del código: bases de datos</h2>
+<p>El código lee los datos de un archivo CSV llamado “Book2.csv” ubicado
+en el directorio “../data” relativo al directorio de trabajo actual. La
+función read.csv() se utiliza para leer el archivo CSV. El argumento del
+archivo especifica la ruta del archivo y header = T indica que el
+archivo tiene una fila de encabezado. Los datos resultantes se almacenan
+en la variable “data”.</p>
+<pre class="r"><code>data &lt;- read.csv (file=&quot;../data/Book2.csv&quot;,header=T)</code></pre>
+</div>
+<div id="explicación-del-código-selección-de-colunmas" class="section level2">
+<h2>Explicación del código: selección de colunmas</h2>
+<p>Se selecciona columnas específicas del conjunto de datos y las asigna
+a un nuevo conjunto de datos denominado data1. La notación
+data[,selected_cols] se usa para seleccionar todas las filas (data[,) y
+solo las columnas especificadas en el vector selected_cols inicializado
+previamente. Esta operación crea subconjuntos del conjunto de datos
+original para incluir solo las columnas deseadas.</p>
+<p>Luego se convierte la columna Atack del conjunto de datos data1 en
+una variable de factor utilizando la función as.factor(). Los factores
+se utilizan en R para representar variables categóricas o nominales.
+Convertir Attack en un factor sugiere que es una variable categórica con
+distintos niveles o clases.</p>
+<pre class="r"><code>data1 &lt;- data[,selected_cols]
+data1$Attack &lt;- as.factor(data1$Attack)</code></pre>
+</div>
+<div id="explicación-del-código-análisis-de-datos" class="section level2">
+<h2>Explicación del código: Análisis de datos</h2>
+<p>La función ´training_method´ realiza los siguientes pasos:</p>
+<p>Toma un parámetro “partition” como entrada. 1. Utiliza la función
+“createDataPartition()” para dividir la variable “Attack” en el conjunto
+de datos “data1” en particiones de entrenamiento y prueba basadas en el
+valor de partición especificado. 1. Crea el conjunto de datos de
+“training” subdividiendo “datos1” en función de los índices obtenidos de
+“createDataPartition()”. 1. Crea el conjunto de datos “testing”
+subdividiendo “data1” excluyendo los índices obtenidos
+de”createDataPartition()“. 1. Calcula el número de filas en el conjunto
+de datos de training y lo almacena en una variable llamada”dim”. 1. Se
+ajusta a un modelo de bosque aleatorio (“randomForest()”) con “Ataque”
+como variable de respuesta y todas las demás variables en el conjunto de
+datos <code>training</code>. 1. Imprime la salida del modelo de bosque
+aleatorio usando “print(output.forest)”. 1. Crea una gráfica del modelo
+de bosque aleatorio usando “plot(output.forest)”. 1. Genera predicciones
+(<code>pred</code>) en el conjunto de datos “testing” utilizando el
+modelo de bosque aleatorio entrenado. 1. Convierte las columnas “Attack”
+y “pred” en el conjunto de datos “testing” al tipo de carácter. 1.
+Compara las columnas <code>Attack</code> y <code>pred</code> para
+verificar si coinciden y asigna el resultado a la columna “match” en el
+conjunto de datos “valid”. 1. Calcula el porcentaje de valores
+coincidentes en el conjunto de datos “valid” y asigna el resultado a la
+variable “output”. 1. Genera una tabla de la variable
+<code>output</code> usando <code>table(output)</code>. 1. Finalmente,
+devuelve la variable <code>output</code>.</p>
+<p>La función parece ser una implementación personalizada para entrenar
+un modelo de bosque aleatorio, evaluar su rendimiento y devolver el
+porcentaje de valores coincidentes en las predicciones.</p>
+<pre class="r"><code>training_method &lt;- function(partition) {
+  
+inTrain &lt;- createDataPartition(y=data1$Attack,p=partition, list=FALSE)
+training &lt;- data1[inTrain,]
+testing &lt;- data1[-inTrain,]
+dim &lt;-nrow (training)
+dim(training)
+
+
+
+
+output.forest &lt;- randomForest(Attack ~ ., data = training)
+#print(output.forest)
+#plot(output.forest)
+
+
+
+pred &lt;- predict(output.forest,testing)
+#str (pred)
+
+
+valid &lt;- testing
+valid$Attack &lt;- as.character(valid$Attack)
+valid$pred &lt;- as.character(pred)
+valid$match &lt;- valid$Attack == valid$pred
+
+table(valid$match)/nrow(valid)*100
+
+
+output &lt;- c()
+output &lt;- c(my_array, valid$match)
+output &lt;- c(my_array, nrow(valid)*100)
+
+
+table(output[1])/output[2]
+
+
+return(my_array)
+
+
+}
+
+my_array &lt;- c()
+
+# For loop to add values to the array
+for (i in 1:2) {
+  value &lt;- training_method(i/100)
+  table(value[1])/value[2]
+  
+  #print(value)
+  #table(value)
+
+  #my_array &lt;- c(my_array, value)
+}</code></pre>
+<pre><code>## Warning in createDataPartition(y = data1$Attack, p = partition, list = FALSE):
+## Some classes have a single record ( imap. ) and these will be selected for the
+## sample
+
+## Warning in createDataPartition(y = data1$Attack, p = partition, list = FALSE):
+## Some classes have a single record ( imap. ) and these will be selected for the
+## sample</code></pre>
+<pre class="r"><code># Print the array
+#my_array
+
+##output &lt;- training_method(0.50)
+##print(output)
+##table(output)
+
+#plot(my_array[0], my_array[1],
+#     main=&quot;Relationship Between accuracy and partition&quot;,
+#     pch=16, col=&quot;blue&quot;)</code></pre>
 </div>
 
 
