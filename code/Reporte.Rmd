@@ -18,7 +18,7 @@ En este análisis, nuestro objetivo es explorar el conjunto de datos de la Copa 
 Para iniciar el análisis es entender en qué consisten los datos proporcionados. En el extracto de Book2.csv podemos encontrar las siguientes columnas con su respectiva definición en los anexos. Con estas definiciones podemos comprender el conjunto de datos, su estructura y el contenido. 
 
 ## Análisis exploratorio de datos
-El siguiente paso es la visualización de datos, crearemos visualizaciones como histogramas, diagramas de caja, diagramas de dispersión o matrices de correlación para comprender la distribución, las relaciones y los posibles valores atípicos en los datos. Utilizaremos el paquete llamado “DataExplorer” para ayudarnos en realizar un reporte sobre la información.
+El siguiente paso es la visualización de datos, crearemos visualizaciones como histogramas, diagramas de caja, diagramas de dispersión o matrices de correlación para comprender la distribución, las relaciones y los posibles valores atípicos en los datos. 
 
 
 ## Explicación del código: configuración de ambiente
@@ -67,7 +67,10 @@ data1$Attack <- as.factor(data1$Attack)
 
 
 
-## Explicación del código: Análisis de datos
+## Explicación del código: Procesamiento de datos
+
+
+Se hace un for loop donde se llama la función ´training_method´que trae el valor del porcentage de aciertos según la partición que se utilice (punto importante de tener en mente, la particion debe ser igual a la cantidad de loops que se quiera hacer, por ejemplo, si se quiere probar 100 veces entonces la partición tendrá un valor de 100. Entre más loops haga más datos tendremos para analisar sin embargo tarda más tiempo procesando los datos y por lo tanto incrementa el tiempo para la creación del reporte
 
 La función ´training_method´ realiza los siguientes pasos:
 
@@ -81,12 +84,14 @@ Toma un parámetro "partition" como entrada.
 1. Crea una gráfica del modelo de bosque aleatorio usando "plot(output.forest)".
 1. Genera predicciones (`pred`) en el conjunto de datos "testing" utilizando el modelo de bosque aleatorio entrenado.
 1. Convierte las columnas "Attack" y "pred" en el conjunto de datos "testing" al tipo de carácter.
-1. Compara las columnas `Attack` y `pred` para verificar si coinciden y asigna el resultado a la columna "match" en el conjunto de datos "valid".
+1. Compara las columnas "Attack" y "pred" para verificar si coinciden y asigna el resultado a la columna "match" en el conjunto de datos "valid".
 1. Calcula el porcentaje de valores coincidentes en el conjunto de datos "valid" y asigna el resultado a la variable "output".
-1. Genera una tabla de la variable `output` usando `table(output)`.
-1. Finalmente, devuelve la variable `output`.
+1. Genera una tabla de la variable "output" usando "table(output)".
+1. Finalmente, devuelve la variable "output".
 
 La función parece ser una implementación personalizada para entrenar un modelo de bosque aleatorio, evaluar su rendimiento y devolver el porcentaje de valores coincidentes en las predicciones.
+
+
 
 ```{r train_test2, echo=TRUE}
 
@@ -102,13 +107,10 @@ dim(training)
 
 
 output.forest <- randomForest(Attack ~ ., data = training)
-#print(output.forest)
-#plot(output.forest)
 
 
 
 pred <- predict(output.forest,testing)
-#str (pred)
 
 
 valid <- testing
@@ -117,17 +119,11 @@ valid$pred <- as.character(pred)
 valid$match <- valid$Attack == valid$pred
 
 
-
-
-print(table(valid$match)/nrow(valid)*100)
-
 table <- table(valid$match)/nrow(valid)*100
-print(table)
 
 
 my_table_df <- as.data.frame(table)
 value_df <- my_table_df[2, 2] 
-print(value_df)
 
 
 return(value_df)
@@ -138,27 +134,37 @@ return(value_df)
 true_array <- c()
 partitions_array <- c()
 
+partitionParameter <- 3
+
 # For loop to add values to the array
-for (i in 1:100) {
-  partition <- i/100
+for (i in 1:partitionParameter) {
+  partition <- i/partitionParameter
+  
+  if(partition == 1){
+    partition <- 0.99
+  }
+  
   value <- training_method(partition)
   true_array <- c(true_array, value)
+  
   partitions_array <- c(partitions_array, partition)
 }
 
-# Print the array
-print(my_array)
-
-##output <- training_method(0.50)
-##print(output)
-##table(output)
-
-plot(true_array, partitions_array,
+plot(partitions_array,true_array,
      main="Relationship Between accuracy and partition",
      pch=16, col="blue")
 
 ```
 
+
+## Ejemplo de un gráfico con 10 valores
+
+![](images/graphOf10partitions.png)
+
+
+## Análisis de los resultados
+
+El gráfico representa la relación entre el porcentage de aciertos, representando el eje Y, con la partición, representando el eje X. Se muestra una tendencia ascendente, cuando el valor de partición aumenta tambien aumenta el porcentage de aciertos, sin embargo hay un punto en el gráfico donde cae drásticamente el porcentage de aciertos. Esto podria ocurrir porque el modelo no tiene una muestra suficiente para entrenarse de manera correcta y por lo tanto hay más falsos.
 
 
 
