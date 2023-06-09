@@ -11,8 +11,8 @@ names(data)    # Column names of the data
 attack <- data$Attack 
 
 
-hist(data$Duration)  # Example histogram of an attribute (V1)
-data$generic_attack <- data$Attack == "apache2.."
+hist(data$attack)  # Example histogram of an attribute (V1)
+data$generic_attack <- data$Attack == "apache2."
 boxplot(data$Duration)  # Example histogram of an attribute (V1)
 stem(data$Duration)
 
@@ -23,13 +23,13 @@ print(distinct_values)
 
 
 
-distinct_counts <- table(data$Attack)
-num_distinct <- length(distinct_counts)
+distinct_counts_attack <- table(data$Attack)
+num_distinct_attack <- length(distinct_counts_attack)
 
-print(distinct_counts)
-print(num_distinct)
+print(distinct_counts_attack)
+print(num_distinct_attack)
 
-hist(distinct_counts)
+hist(distinct_counts_attack)
 #boxplot(distinct_counts)
 
 
