@@ -245,8 +245,7 @@ plot(partitions_array,true_array,
 
 ## Ejemplo de un gráfico con 10 valores
 
-
-![](code/images/graphOf10partitions.png)
+![Ejemplo](code/images/graphOf10partitions.png)
 
 
 # ANÁLISIS DE LOS RESULTADOS
