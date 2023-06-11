@@ -94,6 +94,6 @@ install.packages(pkgs_new)
 
 # RESULTADO DEL PROYECTO
 
-[Link del proyecto](Reporte.Rmd)
+[Link del proyecto](Reporte.html)
 ---
 ⌨️ con ❤️ por Geraldine López y Silvia Bolaños 😊
