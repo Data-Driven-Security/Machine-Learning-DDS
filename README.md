@@ -67,7 +67,7 @@ pkgs_project <- c("randomForest", "readr", "caret" , "e1071" , "prettydoc")
 install.packages(pkgs_project)
 ```
 
-# Instalación 🔧
+# INSTALACIÓN 🔧
 
 Tienes que tener instalados estas librerias como base:
 
@@ -78,17 +78,21 @@ install.packages(pkgs_new)
 
 ```
 
-# Autores ✒️
+# AUTORES ✒️
 
 * **Silvia Bolaños** - *Trabajo Inicial* - [silviabolanosp](https://github.com/silviabolanosp)
 * **Geraldine López** - *Documentación* - [glopezh](https://github.com/glopezh)
 
-# Referencias
+# REFERENCIAS
 
 * [Shiny](http://datascience.recursos.uoc.edu/es/shiny/)
 * [Caret](https://cran.r-project.org/web/packages/caret/index.html)
 * [Intrusion Detection System Requirements](https://www.mitre.org/sites/default/files/pdf/intrusion_lapadula.pdf)
 * [Atack MITRE](https://www.anomali.com/es/resources/what-mitre-attck-is-and-how-it-is-useful)
 * [Usar ShinyApps](https://diegokoz.github.io/intro_ds/clase_6/06_practica_guiada.nb.html#)
+
+# RESULTADO DEL PROYECTO
+
+[Link del proyecto](code/Reporte.Rmd)
 ---
 ⌨️ con ❤️ por Geraldine López y Silvia Bolaños 😊
