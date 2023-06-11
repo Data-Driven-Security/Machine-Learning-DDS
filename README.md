@@ -1,18 +1,20 @@
 
-# **Detección de intrusiones en la red usando Machine Learning**
+# **Detección de intrusiones en la red usando Machine Learning ⚙️**
 
 ***
 
-# INTRODUCCIÓN
+# INTRODUCCIÓN 👨🏻‍💻
 
 <div style="text-align: justify">
 Para iniciar el proceso de análisis de la data de KDD Cup 1999, debemos entender en qué consiste esta base de datos. El conjunto de datos de KDD Cup 1999 es un conjunto de datos de referencia en el campo de la detección de intrusos en la red, que presenta una oportunidad única para analizar y comprender los patrones de tráfico de la red. Este conjunto de datos captura información de conexión de red, incluyendo varios atributos, como direcciones IP de origen y destino, tipos de protocolo y duración de la conexión. 
 </div>
 
-# OBJETIVO
+# OBJETIVO 👀
+
 <div style="text-align: justify">
 El objetivo principal de analizar este conjunto de datos es detectar y clasificar las intrusiones en la red con precisión.
 </div>
+
 # INSTRUCCIONES 🚀
 
 Se trabajo con:
