@@ -92,7 +92,7 @@ Definiciones de las columnas que serán mencionadas:
 31. **SrvDiffHostRate:** El porcentaje de conexiones a diferentes hosts de destino entre las conexiones al mismo.
 </div>
 
-# COMPRENSIÓN DEL CONJUNTO DE DATOS
+# COMPRENDER EL CONJUNTO DE DATOS
 
 <div style="text-align: justify">
 Para iniciar el análisis es entender en qué consisten los datos proporcionados. En el extracto de Book2.csv podemos encontrar las siguientes columnas con su respectiva definición en los anexos. Con estas definiciones podemos comprender el conjunto de datos, su estructura y el contenido. 
