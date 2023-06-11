@@ -40,6 +40,7 @@ vignettes/*.pdf
 #idea
 .idea
 .Rproj.user/
+<<<<<<< HEAD
 .Rhistory
 .Rdata
 .httr-oauth
@@ -54,3 +55,29 @@ Proyecto.html
 Reporte.html
 IDSml.html
 data/mitredata.rds
+=======
+
+.Rhistory
+
+.Rdata
+
+.httr-oauth
+
+.DS_Store/
+
+data-raw/
+
+report_files/
+
+report_cache/
+
+report.html
+
+Proyecto_files/
+
+Proyecto_cache/
+
+Proyecto.html
+
+code/.DS_Store
+>>>>>>> fc13e15f4bbce05fd834b27d1e26987d24d7b2ec
