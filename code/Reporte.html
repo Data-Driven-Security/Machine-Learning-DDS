@@ -221,6 +221,73 @@ with KDD CUP 99 data set.</li>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">Hot =</span> <span class="fu">col_number</span>(), <span class="at">NumFailedLogin =</span> <span class="fu">col_integer</span>()))</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span> (<span class="at">file=</span><span class="st">&quot;../data/original_data/Book2.csv&quot;</span>,<span class="at">header=</span>T)</span></code></pre></div>
+<p>Las variables en Columnas y la unidad de análisis en filas.</p>
+<ol style="list-style-type: decimal">
+<li>Duración: El tiempo (en segundos) que dura una conexión.</li>
+<li>Tipo de protocolo: el protocolo utilizado para la conexión, como TCP
+(Protocolo de control de transmisión), UDP (Protocolo de datagramas de
+usuario) o ICMP (Protocolo de mensajes de control de Internet).</li>
+<li>Servicio: el servicio de red en la máquina de destino a la que se
+accede, como HTTP, FTP o Telnet.</li>
+<li>Bandera: el estado de la conexión, que indica varias banderas como
+S0, S1, S2, S3, SF, REJ, etc., que representan diferentes estados de
+conexión.</li>
+<li>SrcBytes: el número de bytes de datos transferidos desde el origen
+(atacante) al destino (objetivo) durante la conexión.</li>
+<li>DstBytes: el número de bytes de datos transferidos desde el destino
+(objetivo) al origen (atacante) durante la conexión.</li>
+<li>Tierra: esta función indica si las direcciones IP de origen y
+destino y los números de puerto son iguales (1) o diferentes (0). Un
+valor de 1 sugiere un ataque “terrestre”, donde el atacante falsifica la
+dirección IP de origen y envía paquetes a un servicio de escucha en la
+misma máquina.</li>
+<li>WrongFragment: Indica si el paquete contiene errores en el campo de
+fragmentación (1) o no (0).</li>
+<li>Urgente: Indica si el paquete tiene el puntero Urgente establecido
+(1) o no (0).</li>
+<li>Caliente: un conteo de cuántas veces se accedió con éxito a un
+sistema en los últimos dos segundos. 11.NumFailedLogin: la cantidad de
+intentos de inicio de sesión fallidos observados para un usuario o
+sistema en particular.</li>
+<li>LoggedIn: Indica si el inicio de sesión fue exitoso (1) o no
+(0).</li>
+<li>NumCompromised: El número de condiciones comprometidas
+detectadas.</li>
+<li>RootShell: Indica si se ejecutó (1) o no (0) un comando de shell
+raíz.</li>
+<li>SuAttempted: Indica si se intentó (1) o no (0) el comando “su
+root”.</li>
+<li>NumRoot: El número de accesos o intentos de root a un sistema.</li>
+<li>NumFile: el número de operaciones de archivo realizadas por el
+atacante.</li>
+<li>NumShells: el número de solicitudes de shell o sesiones
+creadas.</li>
+<li>NumAccessFiles: El número de accesos a los archivos
+registrados.</li>
+<li>NumOutboundCmds: el número de comandos de salida ejecutados.</li>
+<li>IsHostLogin: Indica si el inicio de sesión pertenece a la lista
+“caliente” (1) o no (0).</li>
+<li>IsGuestLogin: Indica si el inicio de sesión es un inicio de sesión
+de invitado (1) o no (0).</li>
+<li>Recuento: el número de conexiones al mismo host de destino que la
+conexión actual en los últimos dos segundos.</li>
+<li>SrvCount: el número de conexiones al mismo servicio (puerto) que la
+conexión actual en los últimos dos segundos.</li>
+<li>Tasa de error: el porcentaje de conexiones que tienen errores “SYN”
+entre las conexiones al mismo host de destino.</li>
+<li>SrvSerrorRate: El porcentaje de conexiones que tienen errores “SYN”
+entre las conexiones al mismo servicio (puerto).</li>
+<li>RerrorRate: el porcentaje de conexiones que tienen errores “REJ”
+entre las conexiones al mismo host de destino.</li>
+<li>SrvRerrorRate: El porcentaje de conexiones que tienen errores “REJ”
+entre las conexiones al mismo servicio (puerto).</li>
+<li>SameSrvRate: el porcentaje de conexiones al mismo servicio (puerto)
+entre las conexiones al mismo host de destino.</li>
+<li>DiffSrvRate: el porcentaje de conexiones a diferentes servicios
+(puertos) entre las conexiones al mismo host de destino.</li>
+<li>SrvDiffHostRate: El porcentaje de conexiones a diferentes hosts de
+destino entre las conexiones al mismo.</li>
+</ol>
 </div>
 <div id="objetivo" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> OBJETIVO</h1>
@@ -297,7 +364,6 @@ datos.</p>
 CÓDIGO</h1>
 <p>##Bases de datos</p>
 <div style="text-align: justify">
-<p>Las variables en Columnas y la unidad de análisis en filas.</p>
 <p>El código lee los datos de un archivo CSV llamado “Book2.csv” ubicado
 en el directorio “../data” relativo al directorio de trabajo actual. La
 función read.csv() se utiliza para leer el archivo CSV. El argumento del
