@@ -1,7 +1,7 @@
 
 # **Detección de intrusiones en la red usando Machine Learning ⚙️**
 
-***
+---
 
 # INTRODUCCIÓN 👨🏻‍💻
 
