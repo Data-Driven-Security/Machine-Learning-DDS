@@ -15,9 +15,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-library(prettydoc)
+library(tidyverse)
 library(shiny)
+library(prettydoc)
 library(randomForest)
 library(readr)
 library(caret)
@@ -174,7 +174,7 @@ Toma un parámetro "partition" como entrada.
 
 11. Se calcula el porcentaje de valores coincidentes entre los valores de ataque pronosticados y reales mediante la función de tabla. Divide el recuento de coincidencias por el número total de filas en el marco de datos válido y lo multiplica por 100 para obtener el porcentaje.
 
-12. SAe convierte el objeto de la tabla en un marco de datos usando as.data.frame. Luego, extraen el valor en la segunda fila y la segunda columna del marco de datos, almacenándolo en la variable value_df.
+12. Se convierte el objeto de la tabla en un marco de datos usando as.data.frame. Luego, extraen el valor en la segunda fila y la segunda columna del marco de datos, almacenándolo en la variable value_df.
 
 La función parece ser una implementación personalizada para entrenar un modelo de bosque aleatorio, evaluar su rendimiento y devolver el porcentaje de valores coincidentes en las predicciones.
 </div>
