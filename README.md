@@ -1,6 +1,5 @@
 
 # **Detección de intrusiones en la red usando Machine Learning ⚙️**
-
 ---
 
 # INTRODUCCIÓN 👨🏻‍💻
@@ -34,6 +33,8 @@ Es un package de R que facilita la creación de aplicaciones web y gráficos int
 
 <div style="text-align: justify">
 Random forest (o random forests) también conocidos en castellano como ‘“Bosques Aleatorios”’ es una combinación de árboles predictores tal que cada árbol depende de los valores de un vector aleatorio probado independientemente y con la misma distribución para cada uno de estos. Es una modificación sustancial de bagging que construye una larga colección de árboles no correlacionados y luego los promedia.
+</div>
+<div style="text-align: justify">
 WEB: [Rpubs-RandomForest](https://rpubs.com/jigbadouin/randomforest1#:~:text=Tecnica%20de%20random%20forest,para%20cada%20uno%20de%20estos.)
 </div>
 
@@ -93,6 +94,6 @@ install.packages(pkgs_new)
 
 # RESULTADO DEL PROYECTO
 
-[Link del proyecto](code/Reporte.Rmd)
+[Link del proyecto](Reporte.Rmd)
 ---
 ⌨️ con ❤️ por Geraldine López y Silvia Bolaños 😊
