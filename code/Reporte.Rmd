@@ -1,39 +1,23 @@
 ---
-title: "Reporte "
+title: "Data Driven Security - Detección de intrusiones"
 author: "Silvia Bolaños, Geraldine Lopez"
-date: "`r Sys.Date()`"
-output: html_document
+date: "Junio del 2023"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    math: katex
+    toc: true
+    toc_collapsed: true
+    toc_depth: 4
+    number_sections: true
 ---
 
-
-## Introducción
-Para iniciar el proceso de análisis de la data de KDD Cup 1999, debemos entender en qué consiste esta base de datos. El conjunto de datos de KDD Cup 1999, un conjunto de datos de referencia en el campo de la detección de intrusos en la red, que presenta una oportunidad única para analizar y comprender los patrones de tráfico de la red. Este conjunto de datos captura información de conexión de red, incluidos varios atributos, como direcciones IP de origen y destino, tipos de protocolo y duración de la conexión. El objetivo principal de analizar este conjunto de datos es detectar y clasificar las intrusiones en la red con precisión.
-
-
-## Objetivo
-En este análisis, nuestro objetivo es explorar el conjunto de datos de la Copa KDD de 1999 y obtener información sobre los comportamientos del tráfico de red. Mediante el empleo de técnicas de análisis de datos exploratorios, examinaremos la estructura, las distribuciones y las relaciones entre los atributos del conjunto de datos. Profundizaremos en la distribución de clases para comprender la prevalencia de las conexiones normales frente a las intrusiones, y analizaremos las características de los diferentes tipos de conexión de red. Además, aplicaremos algoritmos de aprendizaje automático para construir modelos de clasificación capaces de predecir con precisión las intrusiones en la red en función de los atributos disponibles. Este análisis proporcionará información valiosa sobre la naturaleza del tráfico de la red, ayudará a identificar posibles amenazas de seguridad y contribuirá al desarrollo de sistemas de detección de intrusos eficaces. 
-
-##  Comprención del conjunto de datos
-
-Para iniciar el análisis es entender en qué consisten los datos proporcionados. En el extracto de Book2.csv podemos encontrar las siguientes columnas con su respectiva definición en los anexos. Con estas definiciones podemos comprender el conjunto de datos, su estructura y el contenido. 
-
-## Análisis exploratorio de datos
-El siguiente paso es la visualización de datos, crearemos visualizaciones como histogramas, diagramas de caja, diagramas de dispersión o matrices de correlación para comprender la distribución, las relaciones y los posibles valores atípicos en los datos. 
-
-
-## Explicación del código: configuración de ambiente
-knitr::opts_chunk$set(echo = TRUE) establece la opción global para incluir salidas de fragmentos de código, es decir, repetir el código, de forma predeterminada. Esto significa que el código y su resultado se mostrarán en el documento final a menos que se especifique lo contrario.
-
-Las líneas subsiguientes cargan las bibliotecas requeridas usando la función library(). En este caso, el código carga las siguientes bibliotecas: randomForest, readr, caret y e1071. Estas bibliotecas proporcionan funciones y herramientas adicionales para el análisis de datos y el aprendizaje automático.
-
-selected_cols se define como un vector que contiene los nombres de las columnas seleccionadas del conjunto de datos. Las columnas especificadas incluyen "SrcBytes", "DstBytes", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn", "DstHostSameSrvRate", "DstHostSrvCount", "Flag" y "Attack". Estas son las columnas que se utilizarán en el análisis o modelado luego en el reporte.
-
-El propósito de este fragmento de código es configurar el entorno de R, cargar las bibliotecas necesarias y definir un vector selected_cols que contenga los nombres de las columnas seleccionadas de un conjunto de datos. 
-
-
-```{r setup, include=TRUE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+library(prettydoc)
+library(shiny)
 library(randomForest)
 library(readr)
 library(caret)
@@ -41,56 +25,159 @@ library(e1071)
 
 selected_cols <- c("SrcBytes", "DstBytes", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn",  "DstHostSameSrvRate", "DstHostSrvCount","Flag","Attack" )
 
+```
+# REFERENCES
+
+List of references:
+  
+  - Source data [KDD Cup 1999 Data Data Set](https://archive.ics.uci.edu/ml/datasets/kdd+cup+1999+data)
+  - A Detailed [Analysis of the KDD CUP 99 Data Set](https://www.ecb.torontomu.ca/~bagheri/papers/cisda.pdf)
+  - KDD [download archive](https://www.kdd.org/kdd-cup/view/kdd-cup-1999/Data)
+  - Kaggle comunity [notebooks](https://www.kaggle.com/datasets/galaxyh/kdd-cup-1999-data/code) with KDD CUP 99 data set.
+  
+# OBJETIVO
+
+<div style="text-align: justify">
+En este análisis, nuestro objetivo es explorar el conjunto de datos de la Copa KDD de 1999 y obtener información sobre los comportamientos del tráfico de red. Mediante el empleo de técnicas de análisis de datos exploratorios, examinaremos la estructura, las distribuciones y las relaciones entre los atributos del conjunto de datos. Profundizaremos en la distribución de clases para comprender la prevalencia de las conexiones normales frente a las intrusiones, y analizaremos las características de los diferentes tipos de conexión de red. Además, aplicaremos algoritmos de aprendizaje automático para construir modelos de clasificación capaces de predecir con precisión las intrusiones en la red en función de los atributos disponibles. Este análisis proporcionará información valiosa sobre la naturaleza del tráfico de la red, ayudará a identificar posibles amenazas de seguridad y contribuirá al desarrollo de sistemas de detección de intrusos eficaces. 
+</div>
+
+# DATASETS
+
+```{r read_datas}
+data_full <- read_csv("../data/original_data/Book1.csv",
+                  col_types = cols(SrcBytes = col_integer(),
+                                   DstBytes = col_integer(), Land = col_integer(),
+                                   WrongFragment = col_integer(), Urgent = col_number(),
+                                   Hot = col_number(), NumFailedLogin = col_integer()))
+
+data <- read.csv (file="../data/original_data/Book2.csv",header=T)
 
 ```
-  
-## Explicación del código: bases de datos
-El código lee los datos de un archivo CSV llamado "Book2.csv" ubicado en el directorio "../data" relativo al directorio de trabajo actual. La función read.csv() se utiliza para leer el archivo CSV. El argumento del archivo especifica la ruta del archivo y header = T indica que el archivo tiene una fila de encabezado. Los datos resultantes se almacenan en la variable "data".
+<div style="text-align: justify">
 
+Las variables en Columnas y la unidad de análisis en filas.
+
+Definiciones de las columnas que serán mencionadas:
+
+1. **Duración:** El tiempo (en segundos) que dura una conexión.
+2. **Tipo de protocolo:** el protocolo utilizado para la conexión, como TCP (Protocolo de control de transmisión), UDP (Protocolo de datagramas de usuario) o ICMP (Protocolo de mensajes de control de Internet).
+3. **Servicio:** el servicio de red en la máquina de destino a la que se accede, como HTTP, FTP o Telnet.
+4. **Flag:** el estado de la conexión, que indica varias banderas como S0, S1, S2, S3, SF, REJ, etc., que representan diferentes estados de conexión.
+5. **SrcBytes:** el número de bytes de datos transferidos desde el origen (atacante) al destino (objetivo) durante la conexión.
+6. **DstBytes:** el número de bytes de datos transferidos desde el destino (objetivo) al origen (atacante) durante la conexión.
+7. **Land:** esta función indica si las direcciones IP de origen y destino y los números de puerto son iguales (1) o diferentes (0). Un valor de 1 sugiere un ataque "terrestre", donde el atacante falsifica la dirección IP de origen y envía paquetes a un servicio de escucha en la misma máquina.
+8. **WrongFragment:** Indica si el paquete contiene errores en el campo de fragmentación (1) o no (0).
+9. **Urgent:** Indica si el paquete tiene el puntero Urgente establecido (1) o no (0).
+10. **Hot:** un conteo de cuántas veces se accedió con éxito a un sistema en los últimos dos segundos.
+11. **NumFailedLogin:** la cantidad de intentos de inicio de sesión fallidos observados para un usuario o sistema en particular.
+12. **LoggedIn:** Indica si el inicio de sesión fue exitoso (1) o no (0).
+13. **NumCompromised:** El número de condiciones comprometidas detectadas.
+14. **RootShell:** Indica si se ejecutó (1) o no (0) un comando de shell raíz.
+15. **SuAttempted:** Indica si se intentó (1) o no (0) el comando "su root".
+16. **NumRoot:** El número de accesos o intentos de root a un sistema.
+17. **NumFile:** el número de operaciones de archivo realizadas por el atacante.
+18. **NumShells:** el número de solicitudes de shell o sesiones creadas.
+19. **NumAccessFiles:** El número de accesos a los archivos registrados.
+20. **NumOutboundCmds:** el número de comandos de salida ejecutados.
+21. **IsHostLogin:** Indica si el inicio de sesión pertenece a la lista "caliente" (1) o no (0).
+22. **IsGuestLogin:** Indica si el inicio de sesión es un inicio de sesión de invitado (1) o no (0).
+23. **Recuento:** el número de conexiones al mismo host de destino que la conexión actual en los últimos dos segundos.
+24. **SrvCount:** el número de conexiones al mismo servicio (puerto) que la conexión actual en los últimos dos segundos.
+25. **Tasa de error:** el porcentaje de conexiones que tienen errores "SYN" entre las conexiones al mismo host de destino.
+26. **SrvSerrorRate:** El porcentaje de conexiones que tienen errores "SYN" entre las conexiones al mismo servicio (puerto).
+27. **RerrorRate:** el porcentaje de conexiones que tienen errores "REJ" entre las conexiones al mismo host de destino.
+28. **SrvRerrorRate:** El porcentaje de conexiones que tienen errores "REJ" entre las conexiones al mismo servicio (puerto).
+29. **SameSrvRate:** el porcentaje de conexiones al mismo servicio (puerto) entre las conexiones al mismo host de destino.
+30. **DiffSrvRate:** el porcentaje de conexiones a diferentes servicios (puertos) entre las conexiones al mismo host de destino.
+31. **SrvDiffHostRate:** El porcentaje de conexiones a diferentes hosts de destino entre las conexiones al mismo.
+</div>
+
+# COMPRENSIÓN DEL CONJUNTO DE DATOS
+
+<div style="text-align: justify">
+Para iniciar el análisis es entender en qué consisten los datos proporcionados. En el extracto de Book2.csv podemos encontrar las siguientes columnas con su respectiva definición en los anexos. Con estas definiciones podemos comprender el conjunto de datos, su estructura y el contenido. 
+</div>
+
+# ANÁLISIS EXPLORATORIO DE DATOS
+
+<div style="text-align: justify">
+El siguiente paso es la visualización de datos, crearemos visualizaciones como histogramas, diagramas de caja, diagramas de dispersión o matrices de correlación para comprender la distribución, las relaciones y los posibles valores atípicos en los datos. 
+</div>
+
+# EXPLICACIÓN DEL CÓDIGO
+
+## Configuración del ambiente
+
+<div style="text-align: justify">
+knitr::opts_chunk$set(echo = TRUE) establece la opción global para incluir salidas de fragmentos de código, es decir, repetir el código, de forma predeterminada. Esto significa que el código y su resultado se mostrarán en el documento final a menos que se especifique lo contrario.
+
+Las líneas subsiguientes cargan las bibliotecas requeridas usando la función library(). En este caso, el código carga las siguientes bibliotecas: randomForest, readr, caret y e1071. Estas bibliotecas proporcionan funciones y herramientas adicionales para el análisis de datos y el aprendizaje automático.
+
+selected_cols se define como un vector que contiene los nombres de las columnas seleccionadas del conjunto de datos. Las columnas especificadas incluyen "SrcBytes", "DstBytes", "WrongFragment", "Urgent", "SameSrvRate", "LoggedIn", "DstHostSameSrvRate", "DstHostSrvCount", "Flag" y "Attack". Estas son las columnas que se utilizarán en el análisis o modelado luego en el reporte.
+
+El propósito de este fragmento de código es configurar el entorno de R, cargar las bibliotecas necesarias y definir un vector selected_cols que contenga los nombres de las columnas seleccionadas de un conjunto de datos. 
+</div>
+
+##Bases de datos
+
+<div style="text-align: justify">
+
+El código lee los datos de un archivo CSV llamado "Book2.csv" ubicado en el directorio "../data" relativo al directorio de trabajo actual. La función read.csv() se utiliza para leer el archivo CSV. El argumento del archivo especifica la ruta del archivo y header = T indica que el archivo tiene una fila de encabezado. Los datos resultantes se almacenan en la variable "data".
+</div>
 
 ```{r read_data}
 
-data <- read.csv (file="../data/Book2.csv",header=T)
+data <- read.csv (file="../data/original_data/Book2.csv",header=T)
 
 ```
 
-## Explicación del código: selección de colunmas
+## Selección de columnas
+
+<div style="text-align: justify">
 Se selecciona columnas específicas del conjunto de datos y las asigna a un nuevo conjunto de datos denominado data1. La notación data[,selected_cols] se usa para seleccionar todas las filas (data[,) y solo las columnas especificadas en el vector selected_cols inicializado previamente. Esta operación crea subconjuntos del conjunto de datos original para incluir solo las columnas deseadas.
 
 Luego se convierte la columna Atack del conjunto de datos data1 en una variable de factor utilizando la función as.factor(). Los factores se utilizan en R para representar variables categóricas o nominales. Convertir Attack en un factor sugiere que es una variable categórica con distintos niveles o clases.
-
+</div>
 
 ```{r feature_selection, echo=TRUE}
 data1 <- data[,selected_cols]
 data1$Attack <- as.factor(data1$Attack)
 ```
 
+## Procesamiento de datos
 
-
-## Explicación del código: Procesamiento de datos
-
-
+<div style="text-align: justify">
 Se hace un for loop donde se llama la función ´training_method´que trae el valor del porcentage de aciertos según la partición que se utilice (punto importante de tener en mente, la particion debe ser igual a la cantidad de loops que se quiera hacer, por ejemplo, si se quiere probar 100 veces entonces la partición tendrá un valor de 100. Entre más loops haga más datos tendremos para analisar sin embargo tarda más tiempo procesando los datos y por lo tanto incrementa el tiempo para la creación del reporte
 
 La función ´training_method´ realiza los siguientes pasos:
 
 Toma un parámetro "partition" como entrada.
 1. Utiliza la función "createDataPartition()" para dividir la variable "Attack" en el conjunto de datos "data1" en particiones de entrenamiento y prueba basadas en el valor de partición especificado.
-1. Crea el conjunto de datos de "training" subdividiendo "datos1" en función de los índices obtenidos de "createDataPartition()".
-1. Crea el conjunto de datos "testing" subdividiendo "data1" excluyendo los índices obtenidos de"createDataPartition()".
-1. Calcula el número de filas en el conjunto de datos de training y lo almacena en una variable llamada "dim".
-1. Se ajusta a un modelo de bosque aleatorio ("randomForest()") con "Ataque" como variable de respuesta y todas las demás variables en el conjunto de datos `training`.
-1. Imprime la salida del modelo de bosque aleatorio usando "print(output.forest)".
-1. Crea una gráfica del modelo de bosque aleatorio usando "plot(output.forest)".
-1. Genera predicciones (`pred`) en el conjunto de datos "testing" utilizando el modelo de bosque aleatorio entrenado.
-1. Convierte las columnas "Attack" y "pred" en el conjunto de datos "testing" al tipo de carácter.
-1. Compara las columnas "Attack" y "pred" para verificar si coinciden y asigna el resultado a la columna "match" en el conjunto de datos "valid".
-1. Se calcula el porcentaje de valores coincidentes entre los valores de ataque pronosticados y reales mediante la función de tabla. Divide el recuento de coincidencias por el número total de filas en el marco de datos válido y lo multiplica por 100 para obtener el porcentaje.
-1. SAe convierte el objeto de la tabla en un marco de datos usando as.data.frame. Luego, extraen el valor en la segunda fila y la segunda columna del marco de datos, almacenándolo en la variable value_df.
+
+2. Crea el conjunto de datos de "training" subdividiendo "datos1" en función de los índices obtenidos de "createDataPartition()".
+
+3. Crea el conjunto de datos "testing" subdividiendo "data1" excluyendo los índices obtenidos de"createDataPartition()".
+
+4. Calcula el número de filas en el conjunto de datos de training y lo almacena en una variable llamada "dim".
+
+5. Se ajusta a un modelo de bosque aleatorio ("randomForest()") con "Ataque" como variable de respuesta y todas las demás variables en el conjunto de datos `training`.
+
+6. Imprime la salida del modelo de bosque aleatorio usando "print(output.forest)".
+
+7. Crea una gráfica del modelo de bosque aleatorio usando "plot(output.forest)".
+
+8. Genera predicciones (`pred`) en el conjunto de datos "testing" utilizando el modelo de bosque aleatorio entrenado.
+
+9. Convierte las columnas "Attack" y "pred" en el conjunto de datos "testing" al tipo de carácter.
+
+10. Compara las columnas "Attack" y "pred" para verificar si coinciden y asigna el resultado a la columna "match" en el conjunto de datos "valid".
+
+11. Se calcula el porcentaje de valores coincidentes entre los valores de ataque pronosticados y reales mediante la función de tabla. Divide el recuento de coincidencias por el número total de filas en el marco de datos válido y lo multiplica por 100 para obtener el porcentaje.
+
+12. SAe convierte el objeto de la tabla en un marco de datos usando as.data.frame. Luego, extraen el valor en la segunda fila y la segunda columna del marco de datos, almacenándolo en la variable value_df.
 
 La función parece ser una implementación personalizada para entrenar un modelo de bosque aleatorio, evaluar su rendimiento y devolver el porcentaje de valores coincidentes en las predicciones.
-
-
+</div>
 
 ```{r train_test2, echo=TRUE}
 
@@ -158,12 +245,12 @@ plot(partitions_array,true_array,
 
 ## Ejemplo de un gráfico con 10 valores
 
+
 ![](images/graphOf10partitions.png)
 
 
-## Análisis de los resultados
+# ANÁLISIS DE LOS RESULTADOS
 
+<div style="text-align: justify">
 El gráfico representa la relación entre el porcentage de aciertos, representando el eje Y, con la partición, representando el eje X. Se muestra una tendencia ascendente, cuando el valor de partición aumenta tambien aumenta el porcentage de aciertos, sin embargo hay un punto en el gráfico donde cae drásticamente el porcentage de aciertos. Esto podria ocurrir porque el modelo no tiene una muestra suficiente para entrenarse de manera correcta y por lo tanto hay más falsos.
-
-
-
+</div>
