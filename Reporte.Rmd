@@ -44,13 +44,13 @@ En este análisis, nuestro objetivo es explorar el conjunto de datos de la Copa 
 # DATASETS
 
 ```{r read_datas}
-data_full <- read_csv("../data/original_data/Book1.csv",
+data_full <- read_csv("data/original_data/Book1.csv",
                   col_types = cols(SrcBytes = col_integer(),
                                    DstBytes = col_integer(), Land = col_integer(),
                                    WrongFragment = col_integer(), Urgent = col_number(),
                                    Hot = col_number(), NumFailedLogin = col_integer()))
 
-data <- read.csv (file="../data/original_data/Book2.csv",header=T)
+data <- read.csv (file="data/original_data/Book2.csv",header=T)
 
 ```
 <div style="text-align: justify">
@@ -127,7 +127,7 @@ El código lee los datos de un archivo CSV llamado "Book2.csv" ubicado en el dir
 
 ```{r read_data}
 
-data <- read.csv (file="../data/original_data/Book2.csv",header=T)
+data <- read.csv (file="data/original_data/Book2.csv",header=T)
 
 ```
 
@@ -246,7 +246,7 @@ plot(partitions_array,true_array,
 ## Ejemplo de un gráfico con 10 valores
 
 
-![](images/graphOf10partitions.png)
+![](code/images/graphOf10partitions.png)
 
 
 # ANÁLISIS DE LOS RESULTADOS
