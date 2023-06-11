@@ -28,38 +28,38 @@ Instalar las librerias:
 
 <div style="text-align: justify">
 Es un package de R que facilita la creación de aplicaciones web y gráficos interactivos directamente desde R. Puede alojar aplicaciones independientes en una página web o incrustarlas en documentos R Markdown o crear cuadros de mando usables desde R Studio. También es posible extender aplicaciones Shiny con temas CSS, htmlwidgets y acciones JavaScript, para darles el aspecto deseado.
-<div>
+</div>
 
 * **RandomForest:**
 
 <div style="text-align: justify">
 Random forest (o random forests) también conocidos en castellano como ‘“Bosques Aleatorios”’ es una combinación de árboles predictores tal que cada árbol depende de los valores de un vector aleatorio probado independientemente y con la misma distribución para cada uno de estos. Es una modificación sustancial de bagging que construye una larga colección de árboles no correlacionados y luego los promedia.
 WEB: [Rpubs-RandomForest](https://rpubs.com/jigbadouin/randomforest1#:~:text=Tecnica%20de%20random%20forest,para%20cada%20uno%20de%20estos.)
-<div>
+</div>
 
 * **Readr:**
 
 <div style="text-align: justify">
 El objetivo de 'readr' es proporcionar una forma rápida y sencilla de leer datos rectangulares (como 'csv', 'tsv' y 'fwf'). Está diseñado para analizar de manera flexible muchos tipos de datos que se encuentran en la naturaleza, sin dejar de fallar limpiamente cuando los datos cambian inesperadamente.
-<div>
+</div>
 
 * **Caret:**
 
 <div style="text-align: justify">
 Funciones misceláneas para entrenar y trazar modelos de clasificación y regresión.
-<div>
+</div>
 
 * **e1071:**
 
 <div style="text-align: justify">
 Funciones misceláneas del Departamento de Estadística, Grupo de Teoría de la Probabilidad (Anteriormente: E1071).
-<div>
+</div>
 
 * **Prettydoc:**
 
 <div style="text-align: justify">
 Temas ligeros y agradables para los documentos de R Markdown.
-<div>
+</div>
 
 ```
 pkgs_project <- c("randomForest", "readr", "caret" , "e1071" , "prettydoc")
